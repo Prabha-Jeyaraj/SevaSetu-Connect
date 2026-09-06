@@ -4,7 +4,7 @@
 
 A working prototype of a democratic, cooperative-owned gig-work marketplace that connects verified skilled workers — electricians, plumbers, carpenters, caregivers, painters — with households, through their own Labour Cooperative Societies. Built for Smart India Hackathon 2026 (Problem Statement SIH26089, Ministry of Cooperation).
 
-**[🔗 Live Demo — link will be added here after deployment]**
+**https://sevasetu-connect.onrender.com/**
 
 ---
 
