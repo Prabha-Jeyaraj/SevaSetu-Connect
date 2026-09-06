@@ -1,6 +1,6 @@
 /**
  * Community Posts Router - Bidirectional Job Requirements, Availability Offers, and Worker Collabs
- * SevaSetu Connect - SIH26089
+ * SevaSetu Connect - Posts Route
  */
 
 const express = require('express');

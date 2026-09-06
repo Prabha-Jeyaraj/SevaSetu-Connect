@@ -1,6 +1,6 @@
 /**
  * Bookings Router - Lifecycle: requested -> accepted -> in_progress -> completed -> cancelled
- * SevaSetu Connect - SIH26089
+ * SevaSetu Connect - Bookings Route
  */
 
 const express = require('express');

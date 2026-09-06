@@ -1,6 +1,6 @@
 /**
  * Customers Router - Registration and Profile Management
- * SevaSetu Connect - SIH26089
+ * SevaSetu Connect - Customers Route
  */
 
 const express = require('express');

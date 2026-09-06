@@ -1,7 +1,7 @@
 /**
  * AI Demand Forecasting Router
  * Connects to Python microservice with intelligent analytical fallback
- * SevaSetu Connect - SIH26089
+ * SevaSetu Connect - Forecast Route
  */
 
 const express = require('express');

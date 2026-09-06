@@ -1,6 +1,6 @@
 /**
  * Workers Router - Registration, Verification, Search & Profile
- * SevaSetu Connect - SIH26089
+ * SevaSetu Connect - Workers Route
  */
 
 const express = require('express');
