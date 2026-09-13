@@ -4,7 +4,7 @@
 
 A working prototype of a democratic, cooperative-owned gig-work marketplace that connects verified skilled workers — electricians, plumbers, carpenters, caregivers, painters — with households, through their own Labour Cooperative Societies. Built for Smart India Hackathon 2026 (Problem Statement SIH26089, Ministry of Cooperation).
 
-**[🔗 Live Demo: https://sevasetu-connect.onrender.com/](https://sevasetu-connect.onrender.com/)**
+**[🔗 Live Demo](https://sevasetu-connect.onrender.com/)**
 
 ---
 
@@ -16,17 +16,16 @@ A working prototype of a democratic, cooperative-owned gig-work marketplace that
 | **Organization** | Ministry of Cooperation, National Council for Cooperative Training (NCCT) |
 | **Team** | Frizzy Code |
 | **Status** | Working prototype (hackathon build) |
-| **Run locally at** | `http://localhost:5000` |
 
 ---
 
 ## 🎯 Problem
 
-Labour Cooperative Federations and Societies already have large pools of skilled, verified workers — but no digital channel of their own to reach customers. Private gig platforms fill that gap while charging 25–30% commission, with no welfare or insurance integration for workers. Cooperative workers stay underpaid, uninsured, and digitally invisible.
+Labour Cooperative Federations and Societies already have large pools of skilled, verified workers — but no digital channel of their own to reach customers. Private gig platforms (e.g. Urban Company) fill that gap while charging 20-30% commission, with no transparent welfare integration for workers. Cooperative workers stay underpaid, uninsured, and digitally invisible.
 
 ## 💡 Solution
 
-SevaSetu Connect gives cooperative societies their own direct-to-customer platform — owned by the cooperative, not a private company — retaining 95%+ of revenue for workers, with fair governance and AI-assisted workforce planning built in.
+SevaSetu Connect gives cooperative societies their own direct-to-customer platform — owned by the cooperative, not a private company — with a fully itemized 15% fee (workers keep 85% directly), real government insurance integration, and fair, non-discriminatory job access for every verified worker.
 
 ---
 
@@ -36,17 +35,45 @@ SevaSetu Connect gives cooperative societies their own direct-to-customer platfo
 |---|---|
 | Cooperative Verification & Trust | Workers affiliated with registered cooperative societies get a Verified badge |
 | Bidirectional Marketplace | Customers post requirements and book workers; workers broadcast availability and can request cross-skill collaboration (e.g. a plumber hiring an electrician) |
-| AI Seasonal Demand Forecaster | Predicts next-month service demand per district (e.g. monsoon plumbing surges, festive painting peaks) to guide workforce planning |
+| Category-First Landing Page | Browse workers by service category (electrician, plumber, carpenter, etc.) via a simple icon grid — no login required to explore |
+| AI Seasonal Demand Forecaster | Predicts next-month service demand per district to guide workforce planning |
 | Multi-Tenant Society Dashboards | Each cooperative society admin sees only their own workers, verifications, and bookings |
-| Platform Super Admin Portal | National-level view across all societies, workers, and customers, with society approval/suspension controls |
-| Worker Verification Queue | Society admins review and approve pending worker registrations |
-| Society Welfare Pool | Tracks the cooperative's collective welfare fund (5% pool) |
+| Platform Super Admin Portal | National-level view across all societies, workers, and customers |
+| Fair Job Rotation | Search results rotate fairly among all verified workers (rating 3.8+) — no rating-based priority hoarding |
+| Retraining, Not Exclusion | Workers below a 3.8 rating are flagged for free mandatory retraining, not blocked — final review by their own Society Admin, not an algorithm |
+| Worker Personal Dashboard | Monthly earnings, jobs completed, rating trend, and growth % — visible only to the worker themselves |
+| Society Admin Leaderboard | Internal-only performance view for admins to identify who needs support or recognition — never exposed to customers or used for search ranking |
+
+---
+
+## 💰 Fee Structure — Fully Itemized
+
+Unlike private platforms that take an opaque 20-30% cut, our 15% fee is split into three named, traceable components:
+
+| Component | % | Purpose |
+|---|---|---|
+| Platform Operations | 8% | Servers, app maintenance, standard running costs |
+| Government Insurance Premium Fund | 5% | Auto-pays the worker's PMSBY and a share of PMJJBY premium |
+| Training & Quality Fund | 2% | Funds free mandatory retraining for workers below the rating threshold — never charged to the worker |
+
+Cooperative society membership fees are entirely separate — paid directly by members to their own society, never touching the platform.
+
+---
+
+## 🛡️ Insurance — Real Government Schemes, Not a Custom Fund
+
+Rather than inventing a private welfare fund, SevaSetu Connect guides every worker — Cooperative Member or Independent — to register on **e-Shram**, the Ministry of Labour and Employment's national database of unorganised workers (31+ crore workers already registered as of 2026). This gives access to:
+
+- **PMSBY** (Pradhan Mantri Suraksha Bima Yojana) — ₹2 lakh accidental death/disability cover, ₹1 lakh partial disability, ₹20/year premium
+- **PMJJBY** (Pradhan Mantri Jeevan Jyoti Bima Yojana) — ₹2 lakh life cover, ₹436/year premium
+
+The platform's 5% insurance allocation auto-pays these premiums on the worker's behalf, so coverage never lapses from a missed manual payment.
 
 ---
 
 ## 🏗️ Architecture
 
-Built as a **single unified deployable service** — the Express backend serves both the REST API (`/api/*`) and the compiled React frontend (`/*`) from one port. No separate frontend hosting or reverse proxy needed.
+Built as a **single unified deployable service** — the Express backend serves both the REST API (`/api/*`) and the compiled React frontend (`/*`) from one port.
 
 ```
 SevaSetu Connect/
@@ -61,7 +88,8 @@ SevaSetu Connect/
 │   ├── dist/                    # Production compiled static bundle
 │   └── src/
 │       ├── components/          # Navbar, AuthModal, Badges, WorkerCard,
-│       │                          BookingModal, JobPostModal, ForecastChart
+│       │                          BookingModal, JobPostModal, ForecastChart,
+│       │                          CategoryGrid, WorkerDashboard, AdminLeaderboard
 │       ├── context/              # AuthContext (persistent localStorage sessions)
 │       ├── pages/                 # LandingPage, SearchBrowse, WorkerFeed,
 │       │                           AdminDashboard, SuperAdminPortal, BookingTracker
@@ -84,18 +112,6 @@ SevaSetu Connect/
 - **Backend:** Node.js + Express (serves API and frontend together)
 - **Database:** SQLite
 - **AI/ML:** Python, scikit-learn — GradientBoosting regression model, R² = 0.9402, trained on an 800-row synthetic seasonal demand dataset
-
----
-
-## 🤖 AI Demand Forecasting
-
-Predicts next-month service demand per district and skill type, so cooperative society admins can plan workforce allocation ahead of seasonal spikes (e.g. more plumbers before monsoon, more electricians before Diwali).
-
-- **Dataset:** synthetic, 800 rows, generated to reflect realistic seasonal booking patterns
-- **Model:** GradientBoosting regression (scikit-learn), R² = 0.9402
-- **Output:** forecast + 95% confidence range per skill, shown directly on the Society Admin dashboard
-
-> The synthetic dataset stands in for real cooperative booking history, which would replace it once the platform has live societies onboarded.
 
 ---
 
@@ -145,18 +161,28 @@ This is a **hackathon prototype**, not a production system. Specifically:
 - Database is SQLite (file-based) — suited for a demo, not for concurrent production load
 - The AI model is trained on a synthetic dataset, not real booking history
 - Worker verification is an admin approval toggle, not real document/ID checking
+- e-Shram/PMSBY/PMJJBY integration is a guided-registration flow in the UI, not a live API connection to government systems
 - Payments are not yet integrated with any real payment gateway
 
 ---
 
 ## 🚀 Deployment Note
 
-Because this runs as **one unified Node.js service** (not separate frontend/backend apps), it should be deployed as a single app on a host that supports persistent Node servers — such as **Render** or **Railway** — rather than split across Vercel (frontend) and a separate backend host. Vercel's serverless model isn't a natural fit for a single persistent Express server with a file-based SQLite database.
+Runs as **one unified Node.js service** — deploy as a single app on a host that supports persistent Node servers (Render, Railway), not split across Vercel + a separate backend.
 
-Once deployed, the live link will be added at the top of this README.
+---
+
+## 📚 Government Data Sources
+
+- **National Cooperative Database** — [cooperatives.gov.in](https://cooperatives.gov.in/en) — 8 lakh+ registered cooperative societies, State & District Registrar records
+- **e-Shram Portal** — [eshram.gov.in](https://eshram.gov.in) — Ministry of Labour and Employment, 31+ crore registered unorganised workers, gateway to PMSBY/PMJJBY
 
 ---
 
 ## 📌 Status
 
 🚧 Working prototype — built for Smart India Hackathon 2026 (SIH26089)
+
+## 👥 Team — Frizzy Code
+
+- Prabha J. — Team Lead
