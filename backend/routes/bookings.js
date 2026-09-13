@@ -192,4 +192,66 @@ router.patch('/:id/status', async (req, res) => {
   }
 });
 
+// Customer rate completed booking (Requirement 3: Automatic retraining trigger when rating < 3.8)
+router.post('/:id/rate', async (req, res) => {
+  try {
+    const { rating, feedback } = req.body;
+    const numRating = parseFloat(rating);
+
+    if (isNaN(numRating) || numRating < 1 || numRating > 5) {
+      return res.status(400).json({
+        success: false,
+        error: 'Rating must be a numeric value between 1.0 and 5.0.'
+      });
+    }
+
+    const booking = await db.get(`SELECT * FROM bookings WHERE id = ?`, [req.params.id]);
+    if (!booking) {
+      return res.status(404).json({ success: false, error: 'Booking not found' });
+    }
+
+    const worker = await db.get(`SELECT * FROM workers WHERE id = ?`, [booking.worker_id]);
+    if (!worker) {
+      return res.status(404).json({ success: false, error: 'Worker not found' });
+    }
+
+    // Calculate new average rating
+    const currentCount = worker.review_count || 0;
+    const currentRating = worker.rating || 5.0;
+    const newCount = currentCount + 1;
+    const newAvg = Number(((currentRating * currentCount + numRating) / newCount).toFixed(2));
+
+    let retrainingStatus = worker.retraining_status || 'Not Required';
+    let triggeredRetraining = false;
+
+    // Requirement 3: When a worker's average rating drops below 3.8, automatically flag for Mandatory Retraining
+    if (newAvg < 3.8 && (retrainingStatus === 'Not Required' || !retrainingStatus)) {
+      retrainingStatus = 'Assigned';
+      triggeredRetraining = true;
+    }
+
+    await db.run(
+      `UPDATE workers SET rating = ?, review_count = ?, retraining_status = ? WHERE id = ?`,
+      [newAvg, newCount, retrainingStatus, worker.id]
+    );
+
+    res.json({
+      success: true,
+      message: triggeredRetraining 
+        ? `Rating submitted. Worker average rating is now ${newAvg}. Account flagged for Mandatory Retraining (Account remains active).`
+        : `Rating submitted successfully! New worker rating: ${newAvg}.`,
+      data: {
+        workerId: worker.id,
+        newRating: newAvg,
+        reviewCount: newCount,
+        retrainingStatus,
+        triggeredRetraining
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 module.exports = router;
+

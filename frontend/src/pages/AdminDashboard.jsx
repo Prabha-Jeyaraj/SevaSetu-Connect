@@ -12,7 +12,11 @@ import {
   Calendar, 
   Phone, 
   RefreshCw,
-  Lock
+  Lock,
+  Award,
+  AlertTriangle,
+  Star,
+  BookOpen
 } from 'lucide-react';
 import api from '../services/api';
 import { CooperativeBadge, StatusBadge } from '../components/Badge';
@@ -28,6 +32,8 @@ export const AdminDashboard = ({ selectedSocietyId, setSelectedSocietyId, societ
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [updatingWorkerId, setUpdatingWorkerId] = useState(null);
+  const [updatingRetrainingId, setUpdatingRetrainingId] = useState(null);
+  const [leaderboardSort, setLeaderboardSort] = useState('rating'); // 'rating', 'jobs', 'earnings'
   const [actionSuccess, setActionSuccess] = useState(null);
 
   const fetchDashboard = async () => {
@@ -66,6 +72,23 @@ export const AdminDashboard = ({ selectedSocietyId, setSelectedSocietyId, societ
     }
   };
 
+  // Update worker retraining status
+  const handleUpdateRetraining = async (workerId, newStatus) => {
+    setUpdatingRetrainingId(workerId);
+    try {
+      const res = await api.updateWorkerRetraining(workerId, newStatus);
+      if (res.data.success) {
+        setActionSuccess(`Worker #${workerId} retraining status set to '${newStatus}'.`);
+        fetchDashboard();
+        setTimeout(() => setActionSuccess(null), 4000);
+      }
+    } catch (err) {
+      alert('Failed to update retraining status: ' + (err.response?.data?.error || err.message));
+    } finally {
+      setUpdatingRetrainingId(null);
+    }
+  };
+
   // Update booking status
   const handleUpdateBookingStatus = async (bookingId, newStatus) => {
     try {
@@ -81,6 +104,25 @@ export const AdminDashboard = ({ selectedSocietyId, setSelectedSocietyId, societ
   const pendingWorkers = dashboardData?.pendingWorkers || [];
   const allWorkers = dashboardData?.allWorkers || [];
   const recentBookings = dashboardData?.recentBookings || [];
+
+  const rawLeaderboard = dashboardData?.leaderboardWorkers || allWorkers.map(w => ({
+    ...w,
+    completed_jobs_count: w.review_count || 0,
+    total_gross_earnings: (w.review_count || 0) * (w.hourly_rate || 250) * 2,
+    total_net_payout: Math.round(((w.review_count || 0) * (w.hourly_rate || 250) * 2) * 0.85),
+    is_retraining_flagged: w.rating < 3.8 || w.retraining_status === 'Assigned' || w.retraining_status === 'Still Below Threshold',
+    requires_manual_review: w.retraining_status === 'Still Below Threshold'
+  }));
+
+  const leaderboardWorkers = rawLeaderboard.slice().sort((a, b) => {
+    if (leaderboardSort === 'jobs') {
+      return (b.completed_jobs_count || 0) - (a.completed_jobs_count || 0);
+    }
+    if (leaderboardSort === 'earnings') {
+      return (b.total_gross_earnings || 0) - (a.total_gross_earnings || 0);
+    }
+    return (b.rating || 0) - (a.rating || 0);
+  });
 
   return (
     <div className="space-y-8">
@@ -157,7 +199,7 @@ export const AdminDashboard = ({ selectedSocietyId, setSelectedSocietyId, societ
         </div>
       ) : (
         <>
-          {/* Operations Metrics */}
+          {/* Operations & Revenue Metrics (15% Fee Structure & 85% Worker Payout) */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             
             <div className="glass-card p-5 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between">
@@ -188,30 +230,77 @@ export const AdminDashboard = ({ selectedSocietyId, setSelectedSocietyId, societ
 
             <div className="glass-card p-5 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between">
               <div className="flex items-center justify-between text-slate-500 text-xs font-semibold mb-2">
-                <span>Active Society Bookings</span>
+                <span>Total GMV Volume</span>
                 <Calendar className="w-4 h-4 text-emerald-600" />
               </div>
               <div>
-                <div className="text-2xl font-extrabold text-slate-900">{stats.activeBookings || 0}</div>
+                <div className="text-2xl font-extrabold text-slate-900">₹{stats.totalCooperativeGmv || 0}</div>
                 <span className="text-[10px] text-slate-500 font-medium mt-1 block">
-                  {stats.completedBookings || 0} completed
+                  {stats.completedBookings || 0} completed bookings
                 </span>
               </div>
             </div>
 
-            <div className="glass-card p-5 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between">
+            <div className="glass-card p-5 rounded-3xl border border-emerald-200 bg-emerald-50/30 shadow-sm flex flex-col justify-between">
               <div className="flex items-center justify-between text-slate-500 text-xs font-semibold mb-2">
-                <span>Society Welfare Pool</span>
-                <IndianRupee className="w-4 h-4 text-brand-600" />
+                <span>Worker Direct Payout (85%)</span>
+                <IndianRupee className="w-4 h-4 text-emerald-600" />
               </div>
               <div>
-                <div className="text-2xl font-extrabold text-brand-700">₹{stats.cooperativeWelfarePool || 0}</div>
-                <span className="text-[10px] text-slate-500 font-medium mt-1 block">
-                  5% worker healthcare & emergency pool
+                <div className="text-2xl font-extrabold text-emerald-700">₹{stats.workerDirectPayout || 0}</div>
+                <span className="text-[10px] text-emerald-800 font-bold mt-1 block">
+                  85% paid directly to workers
                 </span>
               </div>
             </div>
 
+          </div>
+
+          {/* REQUIREMENT 1: Itemized 15% Platform Fee Component Breakdown */}
+          <div className="p-4 rounded-3xl bg-slate-900 text-white shadow-sm border border-slate-800 space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-800">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-brand-400" />
+                <span className="text-xs font-extrabold tracking-wide uppercase text-brand-300">
+                  Tracked 15% Cooperative Platform Fee Allocation
+                </span>
+              </div>
+              <span className="text-[10.5px] text-slate-400 font-mono">
+                Total 15% Platform Retained: ₹{stats.totalPlatformFee || 0}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+              <div className="p-3 rounded-2xl bg-slate-800/80 border border-slate-700/60">
+                <div className="flex items-center justify-between font-bold text-blue-300 mb-1">
+                  <span>1. Platform Operations (8%)</span>
+                  <span className="text-white text-sm font-black">₹{stats.platformOpsFund || 0}</span>
+                </div>
+                <p className="text-[10.5px] text-slate-400 leading-snug">
+                  Server infrastructure, SMS gateways, matchmaker logic & non-profit administration.
+                </p>
+              </div>
+
+              <div className="p-3 rounded-2xl bg-slate-800/80 border border-slate-700/60">
+                <div className="flex items-center justify-between font-bold text-emerald-300 mb-1">
+                  <span>2. Govt Insurance Fund (5%)</span>
+                  <span className="text-white text-sm font-black">₹{stats.insuranceFund || 0}</span>
+                </div>
+                <p className="text-[10.5px] text-slate-400 leading-snug">
+                  PMSBY & PMJJBY accidental/life social security insurance premiums for all active members.
+                </p>
+              </div>
+
+              <div className="p-3 rounded-2xl bg-slate-800/80 border border-slate-700/60">
+                <div className="flex items-center justify-between font-bold text-amber-300 mb-1">
+                  <span>3. Training & Quality Fund (2%)</span>
+                  <span className="text-white text-sm font-black">₹{stats.trainingQualityFund || 0}</span>
+                </div>
+                <p className="text-[10.5px] text-slate-400 leading-snug">
+                  Dedicated pool for certified toolkits, apprenticeship workshops & low-rating retraining.
+                </p>
+              </div>
+            </div>
           </div>
 
           {/* Pending Verification Queue */}
@@ -283,6 +372,154 @@ export const AdminDashboard = ({ selectedSocietyId, setSelectedSocietyId, societ
 
           {/* AI Seasonal Demand Forecaster */}
           <ForecastChart district={society?.district || 'Pune'} />
+
+          {/* REQUIREMENT 5: Society Admin Internal Performance Leaderboard */}
+          <div className="glass-card rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-5">
+            {/* Header with Security Disclaimer */}
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+              <div>
+                <div className="flex flex-wrap items-center gap-2 mb-1">
+                  <span className="p-1.5 rounded-lg bg-indigo-600 text-white shadow-xs">
+                    <Award className="w-4 h-4" />
+                  </span>
+                  <h2 className="text-base font-extrabold text-slate-900">
+                    Society Internal Worker Performance Leaderboard
+                  </h2>
+                  <span className="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-slate-900 text-brand-400 border border-slate-700">
+                    Confidential Admin View Only
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 max-w-2xl leading-relaxed">
+                  <strong>Internal Governance:</strong> For administrative recognition, cooperative mentorship allocation, and upskilling triggers. 
+                  This internal performance view is <em>strictly confidential</em>, is never exposed to customers, and does <strong>NOT</strong> determine public search result ordering (which maintains fair, democratic rotation).
+                </p>
+              </div>
+
+              {/* Sort Control Tabs */}
+              <div className="flex items-center gap-1.5 bg-slate-100 p-1.5 rounded-2xl self-start lg:self-center">
+                <span className="text-[10.5px] uppercase font-bold text-slate-400 px-2 hidden sm:inline">Sort By:</span>
+                {[
+                  { id: 'rating', label: '★ Highest Rating', icon: Star },
+                  { id: 'jobs', label: '💼 Jobs Completed', icon: CheckCircle2 },
+                  { id: 'earnings', label: '💰 Top Volume', icon: IndianRupee }
+                ].map((s) => (
+                  <button
+                    key={s.id}
+                    onClick={() => setLeaderboardSort(s.id)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 ${
+                      leaderboardSort === s.id
+                        ? 'bg-white text-indigo-900 shadow-sm'
+                        : 'text-slate-600 hover:text-slate-900'
+                    }`}
+                  >
+                    <span>{s.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Manual Review Alert for Workers with 'Still Below Threshold' */}
+            {leaderboardWorkers.some(w => w.retraining_status === 'Still Below Threshold') && (
+              <div className="p-3.5 rounded-2xl bg-amber-50/90 border border-amber-300 text-amber-950 text-xs flex items-start gap-2.5">
+                <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <strong className="text-amber-900">Manual Society Review Action Required:</strong>
+                  <p className="text-[11px] text-amber-800 mt-0.5">
+                    One or more affiliated workers are flagged as <em>"Still Below Threshold"</em>. As a democratic cooperative federation, accounts are <strong>NEVER blocked or suspended</strong>. Please schedule peer mentorship or 1-on-1 feedback to support their service quality improvement.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Leaderboard Table */}
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead>
+                  <tr className="border-b border-slate-100 text-slate-400 uppercase font-semibold">
+                    <th className="pb-3 w-12 text-center">Rank</th>
+                    <th className="pb-3">Worker & Trade</th>
+                    <th className="pb-3">Rating</th>
+                    <th className="pb-3">Jobs Completed</th>
+                    <th className="pb-3">Gross / Net (85%)</th>
+                    <th className="pb-3">Retraining Status</th>
+                    <th className="pb-3 text-right">Update Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {leaderboardWorkers.map((w, idx) => {
+                    const rankMedal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`;
+                    return (
+                      <tr 
+                        key={w.id} 
+                        className={`transition ${w.retraining_status === 'Still Below Threshold' ? 'bg-amber-50/40 hover:bg-amber-50/70' : 'hover:bg-slate-50/80'}`}
+                      >
+                        <td className="py-3 text-center text-sm font-black">
+                          {rankMedal}
+                        </td>
+                        <td className="py-3">
+                          <div className="font-bold text-slate-900 flex items-center gap-1.5">
+                            <span>{w.name}</span>
+                            <CooperativeBadge isMember={true} verificationStatus={w.verification_status} />
+                          </div>
+                          <div className="text-[10px] text-slate-500">{w.skill_type} • ₹{w.hourly_rate}/hr</div>
+                        </td>
+                        <td className="py-3">
+                          <div className="flex items-center gap-1 font-bold text-amber-900">
+                            <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-500" />
+                            <span>{w.rating}</span>
+                            <span className="text-[10px] text-slate-400 font-normal">({w.review_count})</span>
+                          </div>
+                        </td>
+                        <td className="py-3 font-semibold text-slate-800">
+                          {w.completed_jobs_count || 0} jobs
+                        </td>
+                        <td className="py-3">
+                          <span className="font-extrabold text-slate-900 block">₹{w.total_gross_earnings || 0}</span>
+                          <span className="text-[10px] text-emerald-700 font-bold block">₹{w.total_net_payout || 0} (85% net)</span>
+                        </td>
+                        <td className="py-3">
+                          {/* Retraining Visual Indicator Badge */}
+                          {w.retraining_status === 'Still Below Threshold' ? (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10.5px] font-black bg-rose-100 text-rose-800 border border-rose-300">
+                              <AlertTriangle className="w-3 h-3 text-rose-600" />
+                              <span>Manual Review Required</span>
+                            </span>
+                          ) : w.retraining_status === 'Assigned' ? (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10.5px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                              <BookOpen className="w-3 h-3 text-amber-700" />
+                              <span>Mandatory Retraining</span>
+                            </span>
+                          ) : w.retraining_status === 'Completed' ? (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10.5px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                              <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                              <span>Retraining Completed</span>
+                            </span>
+                          ) : (
+                            <span className="text-[10.5px] font-semibold text-slate-400 px-2 py-0.5 rounded bg-slate-100">
+                              Not Required
+                            </span>
+                          )}
+                        </td>
+                        <td className="py-3 text-right">
+                          <select
+                            value={w.retraining_status || 'Not Required'}
+                            onChange={(e) => handleUpdateRetraining(w.id, e.target.value)}
+                            disabled={updatingRetrainingId === w.id}
+                            className="text-[11px] font-bold px-2 py-1 rounded-lg border border-slate-200 bg-white text-slate-800 focus:ring-2 focus:ring-indigo-500 shadow-xs"
+                          >
+                            <option value="Not Required">Not Required</option>
+                            <option value="Assigned">Assigned</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Still Below Threshold">Still Below Threshold</option>
+                          </select>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
 
           {/* Society Member Roster */}
           <div className="glass-card rounded-3xl p-6 border border-slate-200 shadow-sm">

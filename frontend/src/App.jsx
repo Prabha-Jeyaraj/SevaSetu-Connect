@@ -21,12 +21,14 @@ import SuperAdminPortal from './pages/SuperAdminPortal';
 import BookingTracker from './pages/BookingTracker';
 import WorkerRegister from './pages/WorkerRegister';
 import CustomerRegister from './pages/CustomerRegister';
+import WorkerDashboard from './pages/WorkerDashboard';
 
 function AppContent() {
   const { user, isAuthenticated, isSocietyAdmin, isSuperAdmin, isWorker, isCustomer } = useAuth();
   const [currentTab, setCurrentTab] = useState('landing');
   const [societies, setSocieties] = useState([]);
   const [selectedSocietyId, setSelectedSocietyId] = useState(1);
+  const [selectedSkillCategory, setSelectedSkillCategory] = useState('All');
   const [globalNotice, setGlobalNotice] = useState(null);
 
   // Auth Modal State
@@ -56,6 +58,8 @@ function AppContent() {
         setCurrentTab('super-admin');
       } else if (user.role === 'society_admin') {
         setCurrentTab('society-admin');
+      } else if (user.role === 'worker') {
+        setCurrentTab('worker-dashboard');
       }
     }
   }, [user?.role]);
@@ -111,6 +115,10 @@ function AppContent() {
           <LandingPage
             onGetStarted={handleGetStarted}
             onOpenAuth={handleOpenAuth}
+            onSelectCategory={(skill) => {
+              setSelectedSkillCategory(skill);
+              setCurrentTab('search');
+            }}
           />
         )}
 
@@ -118,6 +126,14 @@ function AppContent() {
           <SearchBrowse
             currentCustomer={user?.role === 'customer' ? user : null}
             onWorkerRegisteredClick={() => handleOpenAuth('signup', 'worker')}
+            initialSkill={selectedSkillCategory}
+          />
+        )}
+
+        {currentTab === 'worker-dashboard' && (
+          <WorkerDashboard
+            activeWorker={user?.role === 'worker' ? user : null}
+            onOpenAuth={handleOpenAuth}
           />
         )}
 

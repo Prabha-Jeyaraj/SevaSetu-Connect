@@ -85,6 +85,7 @@ const query = {
           experience_years INTEGER DEFAULT 3,
           rating REAL DEFAULT 4.8,
           review_count INTEGER DEFAULT 12,
+          retraining_status TEXT DEFAULT 'Not Required',
           bio TEXT,
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
           FOREIGN KEY (society_id) REFERENCES cooperative_societies(id) ON DELETE SET NULL

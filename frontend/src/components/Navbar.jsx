@@ -108,6 +108,21 @@ export const Navbar = ({
               <span>Bookings</span>
             </button>
 
+            {/* Link for Worker Personal Dashboard */}
+            {isWorker && (
+              <button
+                onClick={() => setCurrentTab('worker-dashboard')}
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition ${
+                  currentTab === 'worker-dashboard'
+                    ? 'bg-emerald-600 text-white shadow-sm'
+                    : 'bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200'
+                }`}
+              >
+                <User className="w-4 h-4 text-emerald-600" />
+                <span>My Dashboard</span>
+              </button>
+            )}
+
             {/* Portal link for Society Admin */}
             {isSocietyAdmin && (
               <button
@@ -200,6 +215,16 @@ export const Navbar = ({
                         <CalendarCheck className="w-3.5 h-3.5 text-slate-400" />
                         <span>My Bookings</span>
                       </button>
+
+                      {isWorker && (
+                        <button
+                          onClick={() => { setCurrentTab('worker-dashboard'); setUserDropdownOpen(false); }}
+                          className="w-full text-left px-4 py-2 text-xs text-emerald-700 font-bold hover:bg-emerald-50 flex items-center gap-2"
+                        >
+                          <User className="w-3.5 h-3.5 text-emerald-500" />
+                          <span>Worker Personal Dashboard</span>
+                        </button>
+                      )}
 
                       {isSocietyAdmin && (
                         <button

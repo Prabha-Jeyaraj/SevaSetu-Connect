@@ -44,7 +44,11 @@ router.get('/overview', async (req, res) => {
       FROM bookings`);
 
     const totalVolume = bookingsStats.total_volume || 0;
-    const welfarePool = Math.round(totalVolume * 0.05);
+    const workerDirectPayout = Math.round(totalVolume * 0.85);
+    const platformOpsFund = Math.round(totalVolume * 0.08);
+    const insuranceFund = Math.round(totalVolume * 0.05);
+    const trainingQualityFund = Math.round(totalVolume * 0.02);
+    const totalPlatformFee = Math.round(totalVolume * 0.15);
 
     // Distribution by district
     const districtBreakdown = await db.all(
@@ -70,7 +74,11 @@ router.get('/overview', async (req, res) => {
         activeBookings: bookingsStats.active || 0,
         completedBookings: bookingsStats.completed || 0,
         platformGmv: totalVolume,
-        federationWelfarePool: welfarePool
+        workerDirectPayout,
+        totalPlatformFee,
+        platformOpsFund,
+        insuranceFund,
+        trainingQualityFund
       },
       districtBreakdown,
       tradeBreakdown

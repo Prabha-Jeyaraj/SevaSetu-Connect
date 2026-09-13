@@ -193,14 +193,52 @@ export const BookingModal = ({ worker, customer, isOpen, onClose, onBookingSucce
             />
           </div>
 
-          {/* Cooperative Fair Price Note */}
-          <div className="bg-emerald-50 rounded-xl p-3 border border-emerald-200 flex items-start gap-2 text-xs text-emerald-900">
-            <ShieldCheck className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
-            <div>
-              <span className="font-bold">Cooperative Federation Protection:</span>
-              <p className="text-[11px] text-emerald-800">
-                100% transparent pricing. 95% goes directly to the worker and 5% funds the cooperative emergency worker welfare pool. No predatory platform cuts.
-              </p>
+          {/* Cooperative Transparent 15% Fee Structure Breakdown */}
+          <div className="bg-emerald-50/80 rounded-2xl p-4 border border-emerald-200 text-xs text-emerald-950 space-y-2.5">
+            <div className="flex items-center justify-between pb-2 border-b border-emerald-200/60">
+              <div className="flex items-center gap-1.5 font-bold text-emerald-900">
+                <ShieldCheck className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                <span>Transparent Cooperative Fee Breakdown (100% Audited)</span>
+              </div>
+              <span className="text-[10px] font-extrabold uppercase bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded">
+                Fair Wages
+              </span>
+            </div>
+
+            <div className="space-y-1.5 text-[11px]">
+              <div className="flex items-center justify-between font-bold text-slate-900">
+                <span>Direct Worker Payment (85%)</span>
+                <span className="text-emerald-700 font-extrabold">₹{Math.round(totalAmount * 0.85)}</span>
+              </div>
+
+              <div className="pt-1 border-t border-emerald-200/40 text-slate-600 space-y-1">
+                <div className="flex items-center justify-between text-[10.5px]">
+                  <span className="flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                    Platform Operations (8%)
+                  </span>
+                  <span className="font-semibold text-slate-800">₹{Math.round(totalAmount * 0.08)}</span>
+                </div>
+                <div className="flex items-center justify-between text-[10.5px]">
+                  <span className="flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    Govt Insurance Premium Fund (PMSBY/PMJJBY) (5%)
+                  </span>
+                  <span className="font-semibold text-slate-800">₹{Math.round(totalAmount * 0.05)}</span>
+                </div>
+                <div className="flex items-center justify-between text-[10.5px]">
+                  <span className="flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                    Training & Quality Upskilling Fund (2%)
+                  </span>
+                  <span className="font-semibold text-slate-800">₹{Math.round(totalAmount * 0.02)}</span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between pt-1 border-t border-emerald-200/60 font-bold text-emerald-900 text-xs">
+                <span>Total Amount Charged</span>
+                <span className="text-slate-900 text-sm font-extrabold">₹{totalAmount}</span>
+              </div>
             </div>
           </div>
 

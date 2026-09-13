@@ -89,6 +89,39 @@ router.get('/:id/dashboard', async (req, res) => {
       skillCounts[w.skill_type] = (skillCounts[w.skill_type] || 0) + 1;
     });
 
+    // REQUIREMENT 1: 15% Total Platform Fee broken into 3 tracked components
+    // 85% Direct Worker payment
+    // 8% Platform Operations
+    // 5% Government Insurance Premium Fund (PMSBY/PMJJBY)
+    // 2% Training & Quality Fund
+    const workerDirectPayout = Math.round(totalEarnings * 0.85);
+    const platformOpsFund = Math.round(totalEarnings * 0.08);
+    const insuranceFund = Math.round(totalEarnings * 0.05);
+    const trainingQualityFund = Math.round(totalEarnings * 0.02);
+    const totalPlatformFee = Math.round(totalEarnings * 0.15);
+
+    // REQUIREMENT 5: Aggregate worker metrics for Society Admin Internal Leaderboard
+    const workerStatsMap = {};
+    bookings.filter(b => b.status === 'completed').forEach(b => {
+      if (!workerStatsMap[b.worker_id]) {
+        workerStatsMap[b.worker_id] = { completedJobs: 0, totalEarned: 0 };
+      }
+      workerStatsMap[b.worker_id].completedJobs += 1;
+      workerStatsMap[b.worker_id].totalEarned += (b.total_amount || 0);
+    });
+
+    const leaderboardWorkers = workers.map(w => {
+      const wStat = workerStatsMap[w.id] || { completedJobs: 0, totalEarned: 0 };
+      return {
+        ...w,
+        completed_jobs_count: wStat.completedJobs,
+        total_gross_earnings: wStat.totalEarned,
+        total_net_payout: Math.round(wStat.totalEarned * 0.85),
+        is_retraining_flagged: w.rating < 3.8 || w.retraining_status === 'Assigned' || w.retraining_status === 'Still Below Threshold',
+        requires_manual_review: w.retraining_status === 'Still Below Threshold'
+      };
+    });
+
     res.json({
       success: true,
       data: {
@@ -101,11 +134,16 @@ router.get('/:id/dashboard', async (req, res) => {
           activeBookings: activeBookingsCount,
           completedBookings: bookings.filter(b => b.status === 'completed').length,
           totalCooperativeGmv: totalEarnings,
-          cooperativeWelfarePool: Math.round(totalEarnings * 0.05) // 5% fair cooperative dividend/welfare pool
+          workerDirectPayout,
+          totalPlatformFee,
+          platformOpsFund,      // 8%
+          insuranceFund,        // 5% (PMSBY/PMJJBY)
+          trainingQualityFund   // 2%
         },
         skillBreakdown: skillCounts,
         pendingWorkers,
         allWorkers: workers,
+        leaderboardWorkers,
         recentBookings: bookings
       }
     });

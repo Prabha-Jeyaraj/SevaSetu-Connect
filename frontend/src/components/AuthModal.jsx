@@ -50,7 +50,7 @@ export const AuthModal = ({ isOpen, onClose, defaultMode = 'login', defaultRole 
   const [errorMsg, setErrorMsg] = useState(null);
 
   // Quick fill helper for review
-  const handleQuickFill = (roleType) => {
+  const handleQuickFill = (roleType, specificWorker) => {
     setErrorMsg(null);
     if (roleType === 'super_admin') {
       setActiveRole('super_admin');
@@ -62,8 +62,16 @@ export const AuthModal = ({ isOpen, onClose, defaultMode = 'login', defaultRole 
       setLoginPassword('society123');
     } else if (roleType === 'worker') {
       setActiveRole('worker');
-      setLoginIdentifier('ramesh.shinde@example.com');
-      setLoginPassword('worker123');
+      if (specificWorker === 'ganesh') {
+        setLoginIdentifier('ganesh.shinde@example.com');
+        setLoginPassword('worker123');
+      } else if (specificWorker === 'kavita') {
+        setLoginIdentifier('kavita.more@example.com');
+        setLoginPassword('worker123');
+      } else {
+        setLoginIdentifier('ramesh.shinde@example.com');
+        setLoginPassword('worker123');
+      }
     } else {
       setActiveRole('customer');
       setLoginIdentifier('arjun.mehta@example.com');
@@ -272,15 +280,32 @@ export const AuthModal = ({ isOpen, onClose, defaultMode = 'login', defaultRole 
                 </button>
                 <button
                   type="button"
-                  onClick={() => handleQuickFill('worker')}
-                  className="text-[10px] font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-1 rounded-lg"
+                  onClick={() => handleQuickFill('worker', 'ramesh')}
+                  className="text-[10px] font-semibold bg-emerald-50 hover:bg-emerald-100 text-emerald-800 px-2 py-1 rounded-lg border border-emerald-200"
+                  title="Master Electrician - Rating 4.9"
                 >
-                  Worker Demo
+                  Worker (★ 4.9 Active)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleQuickFill('worker', 'ganesh')}
+                  className="text-[10px] font-semibold bg-amber-50 hover:bg-amber-100 text-amber-900 px-2 py-1 rounded-lg border border-amber-200"
+                  title="Plumber - Rating 3.6 (Mandatory Retraining Assigned)"
+                >
+                  Worker (★ 3.6 Retraining)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleQuickFill('worker', 'kavita')}
+                  className="text-[10px] font-semibold bg-rose-50 hover:bg-rose-100 text-rose-900 px-2 py-1 rounded-lg border border-rose-200"
+                  title="Painter - Rating 3.5 (Still Below Threshold / Review)"
+                >
+                  Worker (★ 3.5 Manual Review)
                 </button>
                 <button
                   type="button"
                   onClick={() => handleQuickFill('society_admin')}
-                  className="text-[10px] font-semibold bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-2 py-1 rounded-lg"
+                  className="text-[10px] font-semibold bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-2 py-1 rounded-lg border border-indigo-200"
                 >
                   Society Admin
                 </button>
@@ -289,7 +314,7 @@ export const AuthModal = ({ isOpen, onClose, defaultMode = 'login', defaultRole 
                   onClick={() => handleQuickFill('super_admin')}
                   className="text-[10px] font-semibold bg-slate-900 hover:bg-slate-800 text-brand-300 px-2 py-1 rounded-lg"
                 >
-                  Platform Super Admin
+                  Super Admin
                 </button>
               </div>
             </div>

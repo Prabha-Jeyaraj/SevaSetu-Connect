@@ -97,6 +97,7 @@ async function seedDatabase() {
         experience_years: 8,
         rating: 4.9,
         review_count: 38,
+        retraining_status: 'Not Required',
         bio: 'Certified master electrician with 8+ years experience in domestic wiring, 3-phase systems, and inverter setups.'
       },
       {
@@ -113,6 +114,7 @@ async function seedDatabase() {
         experience_years: 6,
         rating: 4.8,
         review_count: 29,
+        retraining_status: 'Not Required',
         bio: 'Specialist in bathroom fittings, pipe leak detection, water tank cleaning, and overhead pressure pumps.'
       },
       {
@@ -129,6 +131,7 @@ async function seedDatabase() {
         experience_years: 5,
         rating: 4.95,
         review_count: 42,
+        retraining_status: 'Not Required',
         bio: 'Trained elderly care and post-surgery patient assistance with certified basic nursing and physiotherapy support.'
       },
       {
@@ -145,7 +148,42 @@ async function seedDatabase() {
         experience_years: 4,
         rating: 4.6,
         review_count: 14,
+        retraining_status: 'Not Required',
         bio: 'Furniture assembly, modular kitchen fitting, door lock installation, and custom wooden repairs.'
+      },
+      {
+        name: 'Ganesh Shinde',
+        skill_type: 'Plumber',
+        phone: '+91 98221 00105',
+        email: 'ganesh.shinde@example.com',
+        location: 'Kothrud, Pune',
+        district: 'Pune',
+        society_id: 1,
+        is_cooperative_member: 1,
+        verification_status: 'verified',
+        hourly_rate: 270,
+        experience_years: 3,
+        rating: 3.6, // Low rating triggering Mandatory Retraining
+        review_count: 16,
+        retraining_status: 'Assigned',
+        bio: 'Residential plumbing assistant. Currently enrolled in cooperative precision pipe fitting upskilling module.'
+      },
+      {
+        name: 'Kavita More',
+        skill_type: 'Painter',
+        phone: '+91 98221 00106',
+        email: 'kavita.more@example.com',
+        location: 'Warje, Pune',
+        district: 'Pune',
+        society_id: 1,
+        is_cooperative_member: 1,
+        verification_status: 'verified',
+        hourly_rate: 260,
+        experience_years: 2,
+        rating: 3.5, // Low rating triggering Still Below Threshold / Manual Review
+        review_count: 12,
+        retraining_status: 'Still Below Threshold',
+        bio: 'Wall painter and surface preparation worker. Retraining module completed, pending Society Admin manual review.'
       },
 
       // Bengaluru Society Workers (Society 2)
@@ -163,6 +201,7 @@ async function seedDatabase() {
         experience_years: 7,
         rating: 4.85,
         review_count: 31,
+        retraining_status: 'Not Required',
         bio: 'Home automation expert, smart light setups, appliance troubleshooting, and commercial wiring.'
       },
       {
@@ -179,6 +218,7 @@ async function seedDatabase() {
         experience_years: 10,
         rating: 4.9,
         review_count: 55,
+        retraining_status: 'Not Required',
         bio: 'Expert in drainage systems, geyser installation, RO purification line setup, and sanitary plumbing.'
       },
       {
@@ -195,6 +235,7 @@ async function seedDatabase() {
         experience_years: 4,
         rating: 4.7,
         review_count: 19,
+        retraining_status: 'Not Required',
         bio: 'Compassionate caregiver for geriatric care, mobility support, and medication management.'
       },
       {
@@ -211,6 +252,7 @@ async function seedDatabase() {
         experience_years: 5,
         rating: 4.75,
         review_count: 22,
+        retraining_status: 'Not Required',
         bio: 'Interior wall putty, waterproof texture coating, stencil wall designs, and exterior weather-coat painting.'
       },
 
@@ -229,6 +271,7 @@ async function seedDatabase() {
         experience_years: 9,
         rating: 4.9,
         review_count: 47,
+        retraining_status: 'Not Required',
         bio: 'High-voltage domestic repairs, AC stabilizing, modular switchboards, and fault finding.'
       },
       {
@@ -245,6 +288,7 @@ async function seedDatabase() {
         experience_years: 6,
         rating: 4.8,
         review_count: 26,
+        retraining_status: 'Not Required',
         bio: 'Wardrobe restoration, sofa cushioning, wooden partition structures, and hinge repairs.'
       },
       {
@@ -261,6 +305,7 @@ async function seedDatabase() {
         experience_years: 3,
         rating: 4.65,
         review_count: 11,
+        retraining_status: 'Not Required',
         bio: 'Child and senior care, dedicated day-shift assistance, and special nutritional meal preparation.'
       },
 
@@ -279,6 +324,7 @@ async function seedDatabase() {
         experience_years: 3,
         rating: 4.3,
         review_count: 9,
+        retraining_status: 'Not Required',
         bio: 'Independent freelance plumber handling tap leaks and bathroom clogs.'
       },
       {
@@ -295,6 +341,7 @@ async function seedDatabase() {
         experience_years: 2,
         rating: 4.2,
         review_count: 5,
+        retraining_status: 'Not Required',
         bio: 'Independent electrician for small household wiring fixes.'
       },
       {
@@ -311,15 +358,16 @@ async function seedDatabase() {
         experience_years: 4,
         rating: 4.4,
         review_count: 8,
+        retraining_status: 'Not Required',
         bio: 'Independent wall painter and whitewashing services.'
       }
     ];
 
     for (const w of workers) {
       await db.run(
-        `INSERT INTO workers (name, skill_type, phone, email, location, district, society_id, is_cooperative_member, verification_status, hourly_rate, experience_years, rating, review_count, bio)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [w.name, w.skill_type, w.phone, w.email, w.location, w.district, w.society_id, w.is_cooperative_member, w.verification_status, w.hourly_rate, w.experience_years, w.rating, w.review_count, w.bio]
+        `INSERT INTO workers (name, skill_type, phone, email, location, district, society_id, is_cooperative_member, verification_status, hourly_rate, experience_years, rating, review_count, retraining_status, bio)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [w.name, w.skill_type, w.phone, w.email, w.location, w.district, w.society_id, w.is_cooperative_member, w.verification_status, w.hourly_rate, w.experience_years, w.rating, w.review_count, w.retraining_status || 'Not Required', w.bio]
       );
     }
     console.log(`✅ Seeded ${workers.length} Workers.`);
@@ -426,7 +474,7 @@ async function seedDatabase() {
         worker_id: null,
         customer_id: 1
       },
-      // Seeded Worker User
+      // Seeded Worker User (Standard 4.9 rating)
       {
         name: 'Ramesh Shinde',
         email: 'ramesh.shinde@example.com',
@@ -435,6 +483,28 @@ async function seedDatabase() {
         role: 'worker',
         society_id: 1,
         worker_id: 1,
+        customer_id: null
+      },
+      // Seeded Worker User (3.6 rating - Mandatory Retraining Assigned)
+      {
+        name: 'Ganesh Shinde',
+        email: 'ganesh.shinde@example.com',
+        phone: '+91 98221 00105',
+        password: 'worker123',
+        role: 'worker',
+        society_id: 1,
+        worker_id: 5,
+        customer_id: null
+      },
+      // Seeded Worker User (3.5 rating - Still Below Threshold / Manual Review)
+      {
+        name: 'Kavita More',
+        email: 'kavita.more@example.com',
+        phone: '+91 98221 00106',
+        password: 'worker123',
+        role: 'worker',
+        society_id: 1,
+        worker_id: 6,
         customer_id: null
       }
     ];
@@ -509,6 +579,54 @@ async function seedDatabase() {
         location: 'Kothrud, Pune',
         notes: 'Monsoon terrace drainage blockage clearing.',
         total_amount: 600
+      },
+      {
+        customer_id: 2,
+        worker_id: 1, // Ramesh Shinde (Electrician)
+        service_type: 'Electrician',
+        booking_type: 'one-time',
+        recurrence_detail: null,
+        status: 'completed',
+        scheduled_date: '2026-09-05 11:30 AM',
+        location: 'Model Colony, Shivajinagar, Pune',
+        notes: 'MCB trip troubleshooting and living room chandelier fixture.',
+        total_amount: 1400
+      },
+      {
+        customer_id: 4,
+        worker_id: 1, // Ramesh Shinde (Electrician)
+        service_type: 'Electrician',
+        booking_type: 'one-time',
+        recurrence_detail: null,
+        status: 'completed',
+        scheduled_date: '2026-09-02 03:00 PM',
+        location: 'Aundh, Pune',
+        notes: 'Kitchen chimney electrical connection setup.',
+        total_amount: 1050
+      },
+      {
+        customer_id: 1,
+        worker_id: 1, // Ramesh Shinde (Electrician)
+        service_type: 'Electrician',
+        booking_type: 'one-time',
+        recurrence_detail: null,
+        status: 'completed',
+        scheduled_date: '2026-08-15 10:00 AM',
+        location: 'Kothrud, Pune',
+        notes: 'Festival outdoor lighting wiring and safety check.',
+        total_amount: 1200
+      },
+      {
+        customer_id: 4,
+        worker_id: 1, // Ramesh Shinde (Electrician)
+        service_type: 'Electrician',
+        booking_type: 'one-time',
+        recurrence_detail: null,
+        status: 'completed',
+        scheduled_date: '2026-08-22 04:00 PM',
+        location: 'Baner, Pune',
+        notes: 'Main distribution board rewiring.',
+        total_amount: 900
       }
     ];
 

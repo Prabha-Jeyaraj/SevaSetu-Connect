@@ -15,13 +15,20 @@ import WorkerCard from '../components/WorkerCard';
 import BookingModal from '../components/BookingModal';
 import JobPostModal from '../components/JobPostModal';
 
-export const SearchBrowse = ({ currentCustomer, onWorkerRegisteredClick }) => {
+export const SearchBrowse = ({ currentCustomer, onWorkerRegisteredClick, initialSkill = 'all' }) => {
   const [workers, setWorkers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedSkill, setSelectedSkill] = useState('all');
+  const [selectedSkill, setSelectedSkill] = useState(initialSkill || 'all');
   const [selectedDistrict, setSelectedDistrict] = useState('all');
   const [coopFilter, setCoopFilter] = useState('all'); // 'all', 'coop', 'independent'
+
+  // Sync initialSkill prop if passed from landing page category grid
+  useEffect(() => {
+    if (initialSkill) {
+      setSelectedSkill(initialSkill);
+    }
+  }, [initialSkill]);
 
   // Booking Modal State
   const [selectedWorkerForBooking, setSelectedWorkerForBooking] = useState(null);
@@ -81,7 +88,7 @@ export const SearchBrowse = ({ currentCustomer, onWorkerRegisteredClick }) => {
     setTimeout(() => setBookingSuccessMsg(null), 6000);
   };
 
-  const skillsList = ['all', 'Electrician', 'Plumber', 'Carpenter', 'Caregiver', 'Painter'];
+  const skillsList = ['all', 'Electrician', 'Plumber', 'Carpenter', 'Caregiver', 'Painter', 'Beautician', 'Appliance Repair', 'Home Cleaning'];
   const districtsList = ['all', 'Pune', 'Bengaluru', 'Delhi', 'Mumbai', 'Jaipur'];
 
   return (
@@ -99,9 +106,15 @@ export const SearchBrowse = ({ currentCustomer, onWorkerRegisteredClick }) => {
                 {workers.length} Available
               </span>
             </h1>
-            <p className="text-xs text-slate-500">
-              Direct bookings with fair wages and verified cooperative society trust.
-            </p>
+            <div className="flex flex-wrap items-center gap-2 mt-1">
+              <p className="text-xs text-slate-500">
+                Direct bookings with fair wages and verified cooperative society trust.
+              </p>
+              <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                <ShieldCheck className="w-3 h-3 text-emerald-600" />
+                <span>Fair Rotation Active: Verified workers $\ge$ 3.8 rotated democratically</span>
+              </span>
+            </div>
           </div>
 
           <div className="flex items-center gap-2">
@@ -140,6 +153,15 @@ export const SearchBrowse = ({ currentCustomer, onWorkerRegisteredClick }) => {
             className="px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold transition shadow-sm"
           >
             Search
+          </button>
+          <button
+            type="button"
+            onClick={fetchWorkers}
+            className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition border border-slate-200"
+            title="Rotate workers democratically (Fair round-robin for verified workers >= 3.8 rating)"
+          >
+            <RefreshCw className="w-3.5 h-3.5 text-slate-500" />
+            <span className="hidden sm:inline">Rotate Order</span>
           </button>
         </form>
 

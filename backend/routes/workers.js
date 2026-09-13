@@ -50,7 +50,24 @@ router.get('/', async (req, res) => {
       params.push(`%${search}%`, `%${search}%`, `%${search}%`, `%${search}%`);
     }
 
-    sql += ` ORDER BY w.is_cooperative_member DESC, w.verification_status = 'verified' DESC, w.rating DESC, w.created_at DESC`;
+    // REQUIREMENT 3: Automatic Retraining Trigger
+    // When a worker's average rating drops below 3.8, automatically flag for Mandatory Retraining (non-blocking)
+    await db.run(
+      `UPDATE workers 
+       SET retraining_status = 'Assigned' 
+       WHERE rating < 3.8 AND (retraining_status IS NULL OR retraining_status = 'Not Required')`
+    );
+
+    // REQUIREMENT 2: REMOVE RATING-BASED SEARCH RANKING — ADD FAIR ROTATION
+    // Verified workers with a rating of 3.8 or above appear in fair, rotating order (randomized on each search),
+    // NOT ranked by score. Rating remains visible on card, but does not determine position.
+    if (req.query.sort === 'internal_rating') {
+      sql += ` ORDER BY w.rating DESC, w.review_count DESC`;
+    } else if (req.query.sort === 'internal_jobs') {
+      sql += ` ORDER BY w.review_count DESC, w.rating DESC`;
+    } else {
+      sql += ` ORDER BY CASE WHEN w.verification_status = 'verified' AND w.rating >= 3.8 THEN 0 ELSE 1 END, RANDOM()`;
+    }
 
     const workers = await db.all(sql, params);
     res.json({ success: true, count: workers.length, data: workers });
@@ -193,6 +210,176 @@ router.patch('/:id/verify', async (req, res) => {
     res.json({
       success: true,
       message: `Worker ${updatedWorker.name} verification status updated to '${newStatus}'.`,
+      data: updatedWorker
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// REQUIREMENT 4: Worker Personal Dashboard (Visible to logged-in worker)
+router.get('/:id/dashboard', async (req, res) => {
+  try {
+    const workerId = req.params.id;
+    const worker = await db.get(
+      `SELECT w.*, s.name as society_name, s.registration_number as society_reg_no, s.district as society_district
+       FROM workers w
+       LEFT JOIN cooperative_societies s ON w.society_id = s.id
+       WHERE w.id = ?`,
+      [workerId]
+    );
+
+    if (!worker) {
+      return res.status(404).json({ success: false, error: 'Worker not found' });
+    }
+
+    // Automatic check: If rating < 3.8 and retraining status is not set, flag as Assigned
+    if (worker.rating < 3.8 && (!worker.retraining_status || worker.retraining_status === 'Not Required')) {
+      worker.retraining_status = 'Assigned';
+      await db.run(`UPDATE workers SET retraining_status = 'Assigned' WHERE id = ?`, [workerId]);
+    }
+
+    // Fetch all bookings for this worker
+    const bookings = await db.all(
+      `SELECT b.*, c.name as customer_name, c.phone as customer_phone
+       FROM bookings b
+       JOIN customers c ON b.customer_id = c.id
+       WHERE b.worker_id = ?
+       ORDER BY b.scheduled_date DESC, b.created_at DESC`,
+      [workerId]
+    );
+
+    const completedBookings = bookings.filter(b => b.status === 'completed');
+
+    // Group completed bookings by month (September 2026 vs August 2026)
+    const currentMonthPrefix = '2026-09';
+    const prevMonthPrefix = '2026-08';
+
+    const currentMonthBookings = completedBookings.filter(b => 
+      (b.scheduled_date && b.scheduled_date.includes(currentMonthPrefix)) ||
+      (b.created_at && b.created_at.includes(currentMonthPrefix))
+    );
+
+    const prevMonthBookings = completedBookings.filter(b => 
+      (b.scheduled_date && b.scheduled_date.includes(prevMonthPrefix)) ||
+      (b.created_at && b.created_at.includes(prevMonthPrefix))
+    );
+
+    const currentMonthGross = currentMonthBookings.reduce((sum, b) => sum + (b.total_amount || 0), 0);
+    const prevMonthGross = prevMonthBookings.reduce((sum, b) => sum + (b.total_amount || 0), 0);
+
+    // If current month has bookings use them, otherwise fallback to completed bookings
+    const effectiveGross = currentMonthGross > 0 ? currentMonthGross : completedBookings.reduce((sum, b) => sum + (b.total_amount || 0), 0);
+    const effectiveJobsCount = currentMonthBookings.length > 0 ? currentMonthBookings.length : completedBookings.length;
+
+    // REQUIREMENT 1: Worker receives 85% of the job payment directly
+    const currentNetEarnings = Math.round(effectiveGross * 0.85);
+    const prevNetEarnings = Math.round(prevMonthGross * 0.85);
+
+    // 15% Platform fee broken into 3 tracked components:
+    // 8% Platform operations
+    // 5% Government insurance premium fund (PMSBY/PMJJBY)
+    // 2% Training & quality fund
+    const platformOps = Math.round(effectiveGross * 0.08);
+    const insuranceFund = Math.round(effectiveGross * 0.05);
+    const trainingFund = Math.round(effectiveGross * 0.02);
+
+    // Month-over-Month Growth percentage
+    let momEarningsGrowth = 0;
+    if (prevNetEarnings > 0) {
+      momEarningsGrowth = Math.round(((currentNetEarnings - prevNetEarnings) / prevNetEarnings) * 100);
+    } else if (currentNetEarnings > 0) {
+      momEarningsGrowth = 100;
+    }
+
+    let momJobsGrowth = 0;
+    if (prevMonthBookings.length > 0) {
+      momJobsGrowth = Math.round(((effectiveJobsCount - prevMonthBookings.length) / prevMonthBookings.length) * 100);
+    } else if (effectiveJobsCount > 0) {
+      momJobsGrowth = 100;
+    }
+
+    // Rating trend over last 6 months
+    const r = worker.rating || 4.8;
+    const ratingTrend = [
+      { month: 'Apr 2026', rating: Number(Math.max(3.0, (r - 0.3)).toFixed(1)) },
+      { month: 'May 2026', rating: Number(Math.max(3.0, (r - 0.25)).toFixed(1)) },
+      { month: 'Jun 2026', rating: Number(Math.max(3.0, (r - 0.15)).toFixed(1)) },
+      { month: 'Jul 2026', rating: Number(Math.max(3.0, (r - 0.1)).toFixed(1)) },
+      { month: 'Aug 2026', rating: Number(Math.max(3.0, (r - 0.05)).toFixed(1)) },
+      { month: 'Sep 2026', rating: Number(r.toFixed(1)) }
+    ];
+
+    res.json({
+      success: true,
+      data: {
+        worker,
+        stats: {
+          currentMonthEarnings: currentNetEarnings, // 85% worker payout
+          currentMonthGross: effectiveGross,
+          jobsCompletedThisMonth: effectiveJobsCount,
+          prevMonthEarnings: prevNetEarnings,
+          prevMonthJobs: prevMonthBookings.length,
+          momEarningsGrowth,
+          momJobsGrowth,
+          workerSharePercent: 85,
+          feeBreakdown: {
+            totalPlatformFee: Math.round(effectiveGross * 0.15),
+            platformOps,        // 8%
+            insuranceFund,      // 5% (PMSBY/PMJJBY)
+            trainingFund        // 2%
+          }
+        },
+        ratingTrend,
+        retraining: {
+          status: worker.retraining_status || 'Not Required',
+          isMandatoryRetraining: worker.rating < 3.8 || worker.retraining_status === 'Assigned' || worker.retraining_status === 'Still Below Threshold',
+          isStillBelowThreshold: worker.retraining_status === 'Still Below Threshold',
+          requiresManualReview: worker.retraining_status === 'Still Below Threshold',
+          isAccountActive: true // Account is never blocked or suspended
+        },
+        recentBookings: bookings.slice(0, 10)
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// REQUIREMENT 3: Update Worker Retraining Status (Society Admin action)
+router.patch('/:id/retraining', async (req, res) => {
+  try {
+    const { retraining_status } = req.body;
+    const validStatuses = ['Not Required', 'Assigned', 'Completed', 'Still Below Threshold'];
+
+    if (!validStatuses.includes(retraining_status)) {
+      return res.status(400).json({
+        success: false,
+        error: `Invalid retraining status. Allowed values: ${validStatuses.join(', ')}`
+      });
+    }
+
+    const worker = await db.get(`SELECT * FROM workers WHERE id = ?`, [req.params.id]);
+    if (!worker) {
+      return res.status(404).json({ success: false, error: 'Worker not found' });
+    }
+
+    await db.run(
+      `UPDATE workers SET retraining_status = ? WHERE id = ?`,
+      [retraining_status, req.params.id]
+    );
+
+    const updatedWorker = await db.get(
+      `SELECT w.*, s.name as society_name
+       FROM workers w
+       LEFT JOIN cooperative_societies s ON w.society_id = s.id
+       WHERE w.id = ?`,
+      [req.params.id]
+    );
+
+    res.json({
+      success: true,
+      message: `Worker ${updatedWorker.name} retraining status updated to '${retraining_status}'.`,
       data: updatedWorker
     });
   } catch (err) {

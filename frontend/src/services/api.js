@@ -41,8 +41,10 @@ export const api = {
   // Workers
   getWorkers: (params) => axios.get(`${API_BASE}/workers`, { params }),
   getWorkerById: (id) => axios.get(`${API_BASE}/workers/${id}`),
+  getWorkerDashboard: (id) => axios.get(`${API_BASE}/workers/${id}/dashboard`),
   registerWorker: (data) => axios.post(`${API_BASE}/workers`, data),
   verifyWorker: (id, status) => axios.patch(`${API_BASE}/workers/${id}/verify`, { status }),
+  updateWorkerRetraining: (id, retraining_status) => axios.patch(`${API_BASE}/workers/${id}/retraining`, { retraining_status }),
 
   // Customers
   getCustomers: () => axios.get(`${API_BASE}/customers`),
@@ -54,6 +56,7 @@ export const api = {
   getBookingById: (id) => axios.get(`${API_BASE}/bookings/${id}`),
   createBooking: (data) => axios.post(`${API_BASE}/bookings`, data),
   updateBookingStatus: (id, status) => axios.patch(`${API_BASE}/bookings/${id}/status`, { status }),
+  rateBooking: (id, rating, feedback) => axios.post(`${API_BASE}/bookings/${id}/rate`, { rating, feedback }),
 
   // Community Posts (Bidirectional)
   getPosts: (params) => axios.get(`${API_BASE}/posts`, { params }),

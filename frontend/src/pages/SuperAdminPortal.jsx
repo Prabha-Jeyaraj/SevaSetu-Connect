@@ -185,13 +185,60 @@ export const SuperAdminPortal = () => {
         <div className="glass-card p-4 rounded-2xl border border-slate-200">
           <span className="text-[10px] font-bold text-slate-400 uppercase block">Platform GMV</span>
           <span className="text-xl font-extrabold text-slate-900 mt-1 block">₹{stats?.platformGmv || 0}</span>
-          <span className="text-[10px] text-brand-600 font-semibold">95% to Workers</span>
+          <span className="text-[10px] text-slate-500 font-semibold">{stats?.completedBookings || 0} completed</span>
         </div>
 
         <div className="glass-card p-4 rounded-2xl border border-emerald-200 bg-emerald-50/40">
-          <span className="text-[10px] font-bold text-emerald-800 uppercase block">Federation Welfare</span>
-          <span className="text-xl font-extrabold text-brand-800 mt-1 block">₹{stats?.federationWelfarePool || 0}</span>
-          <span className="text-[10px] text-emerald-700 font-semibold">5% Collective Pool</span>
+          <span className="text-[10px] font-bold text-emerald-800 uppercase block">Worker Payout (85%)</span>
+          <span className="text-xl font-extrabold text-emerald-700 mt-1 block">₹{stats?.workerDirectPayout || Math.round((stats?.platformGmv || 0) * 0.85)}</span>
+          <span className="text-[10px] text-emerald-800 font-semibold">Direct Worker Payout</span>
+        </div>
+      </div>
+
+      {/* Tracked 15% Platform Fee Component Breakdown */}
+      <div className="p-4 rounded-3xl bg-slate-900 text-white shadow-sm border border-slate-800 space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-800">
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="w-4 h-4 text-brand-400" />
+            <span className="text-xs font-extrabold tracking-wide uppercase text-brand-300">
+              Federation 15% Platform Fee Allocation
+            </span>
+          </div>
+          <span className="text-[10.5px] text-slate-400 font-mono">
+            Total 15% Retained: ₹{stats?.totalPlatformFee || Math.round((stats?.platformGmv || 0) * 0.15)}
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+          <div className="p-3 rounded-2xl bg-slate-800/80 border border-slate-700/60">
+            <div className="flex items-center justify-between font-bold text-blue-300 mb-1">
+              <span>1. Platform Operations (8%)</span>
+              <span className="text-white text-sm font-black">₹{stats?.platformOpsFund || Math.round((stats?.platformGmv || 0) * 0.08)}</span>
+            </div>
+            <p className="text-[10.5px] text-slate-400 leading-snug">
+              Infrastructure, SMS gateways, and non-profit administration.
+            </p>
+          </div>
+
+          <div className="p-3 rounded-2xl bg-slate-800/80 border border-slate-700/60">
+            <div className="flex items-center justify-between font-bold text-emerald-300 mb-1">
+              <span>2. Govt Insurance Fund (5%)</span>
+              <span className="text-white text-sm font-black">₹{stats?.insuranceFund || Math.round((stats?.platformGmv || 0) * 0.05)}</span>
+            </div>
+            <p className="text-[10.5px] text-slate-400 leading-snug">
+              PMSBY/PMJJBY premiums for accidental & life social security.
+            </p>
+          </div>
+
+          <div className="p-3 rounded-2xl bg-slate-800/80 border border-slate-700/60">
+            <div className="flex items-center justify-between font-bold text-amber-300 mb-1">
+              <span>3. Training & Quality Fund (2%)</span>
+              <span className="text-white text-sm font-black">₹{stats?.trainingQualityFund || Math.round((stats?.platformGmv || 0) * 0.02)}</span>
+            </div>
+            <p className="text-[10.5px] text-slate-400 leading-snug">
+              Cooperative toolkits, skills development, and low-rating retraining.
+            </p>
+          </div>
         </div>
       </div>
 
