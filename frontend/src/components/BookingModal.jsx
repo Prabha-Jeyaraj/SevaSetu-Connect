@@ -193,7 +193,7 @@ export const BookingModal = ({ worker, customer, isOpen, onClose, onBookingSucce
             />
           </div>
 
-          {/* Cooperative Transparent 15% Fee Structure Breakdown */}
+          {/* Cooperative Transparent 10% Fee Structure Breakdown */}
           <div className="bg-emerald-50/80 rounded-2xl p-4 border border-emerald-200 text-xs text-emerald-950 space-y-2.5">
             <div className="flex items-center justify-between pb-2 border-b border-emerald-200/60">
               <div className="flex items-center gap-1.5 font-bold text-emerald-900">
@@ -207,24 +207,24 @@ export const BookingModal = ({ worker, customer, isOpen, onClose, onBookingSucce
 
             <div className="space-y-1.5 text-[11px]">
               <div className="flex items-center justify-between font-bold text-slate-900">
-                <span>Direct Worker Payment (85%)</span>
-                <span className="text-emerald-700 font-extrabold">₹{Math.round(totalAmount * 0.85)}</span>
+                <span>Direct Worker Payment (90%)</span>
+                <span className="text-emerald-700 font-extrabold">₹{Math.round(totalAmount * 0.90)}</span>
               </div>
 
               <div className="pt-1 border-t border-emerald-200/40 text-slate-600 space-y-1">
                 <div className="flex items-center justify-between text-[10.5px]">
                   <span className="flex items-center gap-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
-                    Platform Operations (8%)
+                    Platform Operations (6%)
                   </span>
-                  <span className="font-semibold text-slate-800">₹{Math.round(totalAmount * 0.08)}</span>
+                  <span className="font-semibold text-slate-800">₹{Math.round(totalAmount * 0.06)}</span>
                 </div>
                 <div className="flex items-center justify-between text-[10.5px]">
                   <span className="flex items-center gap-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                    Govt Insurance Premium Fund (PMSBY/PMJJBY) (5%)
+                    Govt Insurance Premium Fund (PMSBY/PMJJBY) (2%)
                   </span>
-                  <span className="font-semibold text-slate-800">₹{Math.round(totalAmount * 0.05)}</span>
+                  <span className="font-semibold text-slate-800">₹{Math.round(totalAmount * 0.02)}</span>
                 </div>
                 <div className="flex items-center justify-between text-[10.5px]">
                   <span className="flex items-center gap-1">

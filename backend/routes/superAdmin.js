@@ -44,11 +44,11 @@ router.get('/overview', async (req, res) => {
       FROM bookings`);
 
     const totalVolume = bookingsStats.total_volume || 0;
-    const workerDirectPayout = Math.round(totalVolume * 0.85);
-    const platformOpsFund = Math.round(totalVolume * 0.08);
-    const insuranceFund = Math.round(totalVolume * 0.05);
+    const workerDirectPayout = Math.round(totalVolume * 0.90);
+    const platformOpsFund = Math.round(totalVolume * 0.06);
+    const insuranceFund = Math.round(totalVolume * 0.02);
     const trainingQualityFund = Math.round(totalVolume * 0.02);
-    const totalPlatformFee = Math.round(totalVolume * 0.15);
+    const totalPlatformFee = Math.round(totalVolume * 0.10);
 
     // Distribution by district
     const districtBreakdown = await db.all(

@@ -89,16 +89,16 @@ router.get('/:id/dashboard', async (req, res) => {
       skillCounts[w.skill_type] = (skillCounts[w.skill_type] || 0) + 1;
     });
 
-    // REQUIREMENT 1: 15% Total Platform Fee broken into 3 tracked components
-    // 85% Direct Worker payment
-    // 8% Platform Operations
-    // 5% Government Insurance Premium Fund (PMSBY/PMJJBY)
+    // REQUIREMENT 1: 10% Total Platform Fee broken into 3 tracked components
+    // 90% Direct Worker payment
+    // 6% Platform Operations
+    // 2% Government Insurance Premium Fund (PMSBY/PMJJBY)
     // 2% Training & Quality Fund
-    const workerDirectPayout = Math.round(totalEarnings * 0.85);
-    const platformOpsFund = Math.round(totalEarnings * 0.08);
-    const insuranceFund = Math.round(totalEarnings * 0.05);
+    const workerDirectPayout = Math.round(totalEarnings * 0.90);
+    const platformOpsFund = Math.round(totalEarnings * 0.06);
+    const insuranceFund = Math.round(totalEarnings * 0.02);
     const trainingQualityFund = Math.round(totalEarnings * 0.02);
-    const totalPlatformFee = Math.round(totalEarnings * 0.15);
+    const totalPlatformFee = Math.round(totalEarnings * 0.10);
 
     // REQUIREMENT 5: Aggregate worker metrics for Society Admin Internal Leaderboard
     const workerStatsMap = {};
@@ -116,8 +116,8 @@ router.get('/:id/dashboard', async (req, res) => {
         ...w,
         completed_jobs_count: wStat.completedJobs,
         total_gross_earnings: wStat.totalEarned,
-        total_net_payout: Math.round(wStat.totalEarned * 0.85),
-        is_retraining_flagged: w.rating < 3.8 || w.retraining_status === 'Assigned' || w.retraining_status === 'Still Below Threshold',
+        total_net_payout: Math.round(wStat.totalEarned * 0.90),
+        is_retraining_flagged: (w.rating < 3.8 && w.retraining_status !== 'Completed') || w.retraining_status === 'Assigned' || w.retraining_status === 'Still Below Threshold',
         requires_manual_review: w.retraining_status === 'Still Below Threshold'
       };
     });
@@ -136,8 +136,8 @@ router.get('/:id/dashboard', async (req, res) => {
           totalCooperativeGmv: totalEarnings,
           workerDirectPayout,
           totalPlatformFee,
-          platformOpsFund,      // 8%
-          insuranceFund,        // 5% (PMSBY/PMJJBY)
+          platformOpsFund,      // 6%
+          insuranceFund,        // 2% (PMSBY/PMJJBY)
           trainingQualityFund   // 2%
         },
         skillBreakdown: skillCounts,

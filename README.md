@@ -25,7 +25,7 @@ Labour Cooperative Federations and Societies already have large pools of skilled
 
 ## 💡 Solution
 
-SevaSetu Connect gives cooperative societies their own direct-to-customer platform — owned by the cooperative, not a private company — with a fully itemized 15% fee (workers keep 85% directly), real government insurance integration, and fair, non-discriminatory job access for every verified worker.
+SevaSetu Connect gives cooperative societies their own direct-to-customer platform — owned by the cooperative, not a private company — with a fully itemized 10% fee (workers keep 90% directly), real government insurance integration, and fair, non-discriminatory job access for every verified worker.
 
 ---
 
@@ -48,12 +48,12 @@ SevaSetu Connect gives cooperative societies their own direct-to-customer platfo
 
 ## 💰 Fee Structure — Fully Itemized
 
-Unlike private platforms that take an opaque 20-30% cut, our 15% fee is split into three named, traceable components:
+Unlike private platforms that take an opaque 20-30% cut, our 10% fee is split into three named, traceable components:
 
 | Component | % | Purpose |
 |---|---|---|
-| Platform Operations | 8% | Servers, app maintenance, standard running costs |
-| Government Insurance Premium Fund | 5% | Auto-pays the worker's PMSBY and a share of PMJJBY premium |
+| Platform Operations | 6% | Servers, app maintenance, standard running costs |
+| Government Insurance Premium Fund | 2% | Auto-pays the worker's PMSBY and a share of PMJJBY premium |
 | Training & Quality Fund | 2% | Funds free mandatory retraining for workers below the rating threshold — never charged to the worker |
 
 Cooperative society membership fees are entirely separate — paid directly by members to their own society, never touching the platform.
@@ -67,7 +67,7 @@ Rather than inventing a private welfare fund, SevaSetu Connect guides every work
 - **PMSBY** (Pradhan Mantri Suraksha Bima Yojana) — ₹2 lakh accidental death/disability cover, ₹1 lakh partial disability, ₹20/year premium
 - **PMJJBY** (Pradhan Mantri Jeevan Jyoti Bima Yojana) — ₹2 lakh life cover, ₹436/year premium
 
-The platform's 5% insurance allocation auto-pays these premiums on the worker's behalf, so coverage never lapses from a missed manual payment.
+The platform's 2% insurance allocation auto-pays these premiums on the worker's behalf, so coverage never lapses from a missed manual payment.
 
 ---
 

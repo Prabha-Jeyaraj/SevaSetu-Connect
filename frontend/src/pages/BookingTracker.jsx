@@ -237,7 +237,7 @@ export const BookingTracker = ({ currentCustomer, activeWorker }) => {
                 )}
               </div>
 
-              {/* Itemized 15% Cooperative Fee Structure & Invoice Breakdown */}
+              {/* Itemized 10% Cooperative Fee Structure & Invoice Breakdown */}
               <div className="mt-3 p-3 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs">
                 <div className="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-slate-200/60">
                   <div className="flex items-center gap-1.5 font-bold text-slate-900">
@@ -245,24 +245,24 @@ export const BookingTracker = ({ currentCustomer, activeWorker }) => {
                     <span>Audited Payout & Fee Breakdown</span>
                   </div>
                   <span className="text-[10px] font-extrabold uppercase bg-brand-50 text-brand-700 px-2 py-0.5 rounded border border-brand-200">
-                    85% Worker / 15% Platform Split
+                    90% Worker / 10% Platform Split
                   </span>
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 text-[11px]">
                   <div className="p-2 rounded-xl bg-white border border-slate-100 shadow-xs">
-                    <span className="text-[10px] uppercase font-bold text-emerald-700 block">Worker Direct (85%)</span>
-                    <span className="text-xs font-extrabold text-slate-900">₹{Math.round((b.total_amount || 0) * 0.85)}</span>
+                    <span className="text-[10px] uppercase font-bold text-emerald-700 block">Worker Direct (90%)</span>
+                    <span className="text-xs font-extrabold text-slate-900">₹{Math.round((b.total_amount || 0) * 0.90)}</span>
                   </div>
 
                   <div className="p-2 rounded-xl bg-white border border-slate-100 shadow-xs">
-                    <span className="text-[10px] uppercase font-bold text-blue-700 block">Platform Ops (8%)</span>
-                    <span className="text-xs font-bold text-slate-800">₹{Math.round((b.total_amount || 0) * 0.08)}</span>
+                    <span className="text-[10px] uppercase font-bold text-blue-700 block">Platform Ops (6%)</span>
+                    <span className="text-xs font-bold text-slate-800">₹{Math.round((b.total_amount || 0) * 0.06)}</span>
                   </div>
 
                   <div className="p-2 rounded-xl bg-white border border-slate-100 shadow-xs">
-                    <span className="text-[10px] uppercase font-bold text-emerald-700 block">Govt Insurance (5%)</span>
-                    <span className="text-xs font-bold text-slate-800">₹{Math.round((b.total_amount || 0) * 0.05)}</span>
+                    <span className="text-[10px] uppercase font-bold text-emerald-700 block">Govt Insurance (2%)</span>
+                    <span className="text-xs font-bold text-slate-800">₹{Math.round((b.total_amount || 0) * 0.02)}</span>
                     <span className="text-[9px] text-slate-400 block">PMSBY/PMJJBY</span>
                   </div>
 
@@ -278,7 +278,7 @@ export const BookingTracker = ({ currentCustomer, activeWorker }) => {
               <div className="flex items-baseline gap-1">
                 <span className="text-xs text-slate-400 font-medium">Total Bill:</span>
                 <span className="text-base font-extrabold text-slate-900">₹{b.total_amount}</span>
-                <span className="text-[10px] text-emerald-700 font-bold ml-1">(₹{Math.round((b.total_amount || 0) * 0.85)} paid directly to worker)</span>
+                <span className="text-[10px] text-emerald-700 font-bold ml-1">(₹{Math.round((b.total_amount || 0) * 0.90)} paid directly to worker)</span>
               </div>
 
                 <div className="flex items-center gap-2">

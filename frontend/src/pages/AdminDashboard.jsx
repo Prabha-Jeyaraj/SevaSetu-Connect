@@ -109,8 +109,8 @@ export const AdminDashboard = ({ selectedSocietyId, setSelectedSocietyId, societ
     ...w,
     completed_jobs_count: w.review_count || 0,
     total_gross_earnings: (w.review_count || 0) * (w.hourly_rate || 250) * 2,
-    total_net_payout: Math.round(((w.review_count || 0) * (w.hourly_rate || 250) * 2) * 0.85),
-    is_retraining_flagged: w.rating < 3.8 || w.retraining_status === 'Assigned' || w.retraining_status === 'Still Below Threshold',
+    total_net_payout: Math.round(((w.review_count || 0) * (w.hourly_rate || 250) * 2) * 0.90),
+    is_retraining_flagged: (w.rating < 3.8 && w.retraining_status !== 'Completed') || w.retraining_status === 'Assigned' || w.retraining_status === 'Still Below Threshold',
     requires_manual_review: w.retraining_status === 'Still Below Threshold'
   }));
 
@@ -199,7 +199,7 @@ export const AdminDashboard = ({ selectedSocietyId, setSelectedSocietyId, societ
         </div>
       ) : (
         <>
-          {/* Operations & Revenue Metrics (15% Fee Structure & 85% Worker Payout) */}
+          {/* Operations & Revenue Metrics (10% Fee Structure & 90% Worker Payout) */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             
             <div className="glass-card p-5 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between">
@@ -243,37 +243,37 @@ export const AdminDashboard = ({ selectedSocietyId, setSelectedSocietyId, societ
 
             <div className="glass-card p-5 rounded-3xl border border-emerald-200 bg-emerald-50/30 shadow-sm flex flex-col justify-between">
               <div className="flex items-center justify-between text-slate-500 text-xs font-semibold mb-2">
-                <span>Worker Direct Payout (85%)</span>
+                <span>Worker Direct Payout (90%)</span>
                 <IndianRupee className="w-4 h-4 text-emerald-600" />
               </div>
               <div>
                 <div className="text-2xl font-extrabold text-emerald-700">₹{stats.workerDirectPayout || 0}</div>
                 <span className="text-[10px] text-emerald-800 font-bold mt-1 block">
-                  85% paid directly to workers
+                  90% paid directly to workers
                 </span>
               </div>
             </div>
 
           </div>
 
-          {/* REQUIREMENT 1: Itemized 15% Platform Fee Component Breakdown */}
+          {/* REQUIREMENT 1: Itemized 10% Platform Fee Component Breakdown */}
           <div className="p-4 rounded-3xl bg-slate-900 text-white shadow-sm border border-slate-800 space-y-3">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-800">
               <div className="flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-brand-400" />
                 <span className="text-xs font-extrabold tracking-wide uppercase text-brand-300">
-                  Tracked 15% Cooperative Platform Fee Allocation
+                  Tracked 10% Cooperative Platform Fee Allocation
                 </span>
               </div>
               <span className="text-[10.5px] text-slate-400 font-mono">
-                Total 15% Platform Retained: ₹{stats.totalPlatformFee || 0}
+                Total 10% Platform Retained: ₹{stats.totalPlatformFee || 0}
               </span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
               <div className="p-3 rounded-2xl bg-slate-800/80 border border-slate-700/60">
                 <div className="flex items-center justify-between font-bold text-blue-300 mb-1">
-                  <span>1. Platform Operations (8%)</span>
+                  <span>1. Platform Operations (6%)</span>
                   <span className="text-white text-sm font-black">₹{stats.platformOpsFund || 0}</span>
                 </div>
                 <p className="text-[10.5px] text-slate-400 leading-snug">
@@ -283,7 +283,7 @@ export const AdminDashboard = ({ selectedSocietyId, setSelectedSocietyId, societ
 
               <div className="p-3 rounded-2xl bg-slate-800/80 border border-slate-700/60">
                 <div className="flex items-center justify-between font-bold text-emerald-300 mb-1">
-                  <span>2. Govt Insurance Fund (5%)</span>
+                  <span>2. Govt Insurance Fund (2%)</span>
                   <span className="text-white text-sm font-black">₹{stats.insuranceFund || 0}</span>
                 </div>
                 <p className="text-[10.5px] text-slate-400 leading-snug">
@@ -440,7 +440,7 @@ export const AdminDashboard = ({ selectedSocietyId, setSelectedSocietyId, societ
                     <th className="pb-3">Worker & Trade</th>
                     <th className="pb-3">Rating</th>
                     <th className="pb-3">Jobs Completed</th>
-                    <th className="pb-3">Gross / Net (85%)</th>
+                    <th className="pb-3">Gross / Net (90%)</th>
                     <th className="pb-3">Retraining Status</th>
                     <th className="pb-3 text-right">Update Status</th>
                   </tr>
@@ -475,7 +475,7 @@ export const AdminDashboard = ({ selectedSocietyId, setSelectedSocietyId, societ
                         </td>
                         <td className="py-3">
                           <span className="font-extrabold text-slate-900 block">₹{w.total_gross_earnings || 0}</span>
-                          <span className="text-[10px] text-emerald-700 font-bold block">₹{w.total_net_payout || 0} (85% net)</span>
+                          <span className="text-[10px] text-emerald-700 font-bold block">₹{w.total_net_payout || 0} (90% net)</span>
                         </td>
                         <td className="py-3">
                           {/* Retraining Visual Indicator Badge */}

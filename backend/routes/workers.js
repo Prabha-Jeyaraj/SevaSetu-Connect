@@ -272,16 +272,16 @@ router.get('/:id/dashboard', async (req, res) => {
     const effectiveGross = currentMonthGross > 0 ? currentMonthGross : completedBookings.reduce((sum, b) => sum + (b.total_amount || 0), 0);
     const effectiveJobsCount = currentMonthBookings.length > 0 ? currentMonthBookings.length : completedBookings.length;
 
-    // REQUIREMENT 1: Worker receives 85% of the job payment directly
-    const currentNetEarnings = Math.round(effectiveGross * 0.85);
-    const prevNetEarnings = Math.round(prevMonthGross * 0.85);
+    // REQUIREMENT 1: Worker receives 90% of the job payment directly
+    const currentNetEarnings = Math.round(effectiveGross * 0.90);
+    const prevNetEarnings = Math.round(prevMonthGross * 0.90);
 
-    // 15% Platform fee broken into 3 tracked components:
-    // 8% Platform operations
-    // 5% Government insurance premium fund (PMSBY/PMJJBY)
+    // 10% Platform fee broken into 3 tracked components:
+    // 6% Platform operations
+    // 2% Government insurance premium fund (PMSBY/PMJJBY)
     // 2% Training & quality fund
-    const platformOps = Math.round(effectiveGross * 0.08);
-    const insuranceFund = Math.round(effectiveGross * 0.05);
+    const platformOps = Math.round(effectiveGross * 0.06);
+    const insuranceFund = Math.round(effectiveGross * 0.02);
     const trainingFund = Math.round(effectiveGross * 0.02);
 
     // Month-over-Month Growth percentage
@@ -315,26 +315,27 @@ router.get('/:id/dashboard', async (req, res) => {
       data: {
         worker,
         stats: {
-          currentMonthEarnings: currentNetEarnings, // 85% worker payout
+          currentMonthEarnings: currentNetEarnings, // 90% worker payout
           currentMonthGross: effectiveGross,
           jobsCompletedThisMonth: effectiveJobsCount,
           prevMonthEarnings: prevNetEarnings,
           prevMonthJobs: prevMonthBookings.length,
           momEarningsGrowth,
           momJobsGrowth,
-          workerSharePercent: 85,
+          workerSharePercent: 90,
           feeBreakdown: {
-            totalPlatformFee: Math.round(effectiveGross * 0.15),
-            platformOps,        // 8%
-            insuranceFund,      // 5% (PMSBY/PMJJBY)
+            totalPlatformFee: Math.round(effectiveGross * 0.10),
+            platformOps,        // 6%
+            insuranceFund,      // 2% (PMSBY/PMJJBY)
             trainingFund        // 2%
           }
         },
         ratingTrend,
         retraining: {
           status: worker.retraining_status || 'Not Required',
-          isMandatoryRetraining: worker.rating < 3.8 || worker.retraining_status === 'Assigned' || worker.retraining_status === 'Still Below Threshold',
+          isMandatoryRetraining: worker.retraining_status === 'Assigned' || (worker.rating < 3.8 && worker.retraining_status !== 'Completed'),
           isStillBelowThreshold: worker.retraining_status === 'Still Below Threshold',
+          isCompleted: worker.retraining_status === 'Completed',
           requiresManualReview: worker.retraining_status === 'Still Below Threshold',
           isAccountActive: true // Account is never blocked or suspended
         },

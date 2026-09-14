@@ -64,7 +64,7 @@ export const LandingPage = ({ onGetStarted, onOpenAuth, onSelectCategory }) => {
           <p className="text-base sm:text-lg text-slate-300 mb-8 leading-relaxed font-normal">
             SevaSetu Connect connects verified local service professionals with homeowners 
             and businesses through registered worker cooperatives. We replace 25–30% corporate 
-            platform cuts with 85% direct worker payout, 8% platform operations, 5% govt PMSBY/PMJJBY insurance fund, and 2% training fund.
+            platform cuts with 90% direct worker payout, 6% platform operations, 2% govt PMSBY/PMJJBY insurance fund, and 2% training fund.
           </p>
 
           <div className="flex flex-wrap items-center gap-3">
@@ -86,15 +86,15 @@ export const LandingPage = ({ onGetStarted, onOpenAuth, onSelectCategory }) => {
             </button>
           </div>
 
-          {/* Social Proof Numbers (Requirement 1: 85% worker + 15% 3-component fee) */}
+          {/* Social Proof Numbers (Requirement 1: 90% worker + 10% 3-component fee) */}
           <div className="grid grid-cols-3 gap-6 pt-10 mt-10 border-t border-slate-800 text-slate-300">
             <div>
-              <div className="text-2xl font-extrabold text-white">85%</div>
+              <div className="text-2xl font-extrabold text-white">90%</div>
               <div className="text-xs text-slate-400">Direct Worker Payout</div>
             </div>
             <div>
-              <div className="text-2xl font-extrabold text-white">15% Fee</div>
-              <div className="text-xs text-slate-400">8% Ops • 5% PMSBY • 2% Training</div>
+              <div className="text-2xl font-extrabold text-white">10% Fee</div>
+              <div className="text-xs text-slate-400">6% Ops • 2% PMSBY • 2% Training</div>
             </div>
             <div>
               <div className="text-2xl font-extrabold text-white">100%</div>
@@ -116,7 +116,7 @@ export const LandingPage = ({ onGetStarted, onOpenAuth, onSelectCategory }) => {
                 What service do you need today?
               </h2>
               <p className="text-xs text-slate-500 mt-0.5">
-                Select a trade to instantly browse verified local cooperative professionals with 85% direct wages.
+                Select a trade to instantly browse verified local cooperative professionals with 90% direct wages.
               </p>
             </div>
             <button
@@ -203,11 +203,11 @@ export const LandingPage = ({ onGetStarted, onOpenAuth, onSelectCategory }) => {
                 <ul className="space-y-2.5 text-xs text-slate-700">
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
-                    <span><strong>85% paid directly to the worker.</strong> Fair, dignity-first compensation with transparent accounting.</span>
+                    <span><strong>90% paid directly to the worker.</strong> Fair, dignity-first compensation with transparent accounting.</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
-                    <span><strong>15% Total Platform Social Security:</strong> 8% non-profit operations, 5% govt PMSBY/PMJJBY insurance fund, 2% upskilling & training.</span>
+                    <span><strong>10% Total Platform Social Security:</strong> 6% non-profit operations, 2% govt PMSBY/PMJJBY insurance fund, 2% upskilling & training.</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
@@ -275,11 +275,11 @@ export const LandingPage = ({ onGetStarted, onOpenAuth, onSelectCategory }) => {
                     Guaranteed Fair Completion
                   </h3>
                   <p className="text-xs text-slate-600 leading-relaxed">
-                    Review work, mark bookings completed, and support the cooperative ecosystem. 85% goes directly to 
-                    the worker and 15% funds operations, PMSBY/PMJJBY govt insurance, and retraining.
+                    Review work, mark bookings completed, and support the cooperative ecosystem. 90% goes directly to 
+                    the worker and 10% funds operations, PMSBY/PMJJBY govt insurance, and retraining.
                   </p>
                 </div>
-                <span className="text-[10px] font-bold text-emerald-700 mt-4 block">Audited 85/15 Cooperative Protection</span>
+                <span className="text-[10px] font-bold text-emerald-700 mt-4 block">Audited 90/10 Cooperative Protection</span>
               </div>
             </div>
           </section>
@@ -292,7 +292,7 @@ export const LandingPage = ({ onGetStarted, onOpenAuth, onSelectCategory }) => {
           </h2>
           <p className="text-xs sm:text-sm text-brand-100 font-normal leading-relaxed">
             Whether you need a master electrician for your home, or you are a skilled artisan 
-            seeking 85% direct payout with 100% cooperative social security, join SevaSetu Connect today.
+            seeking 90% direct payout with 100% cooperative social security, join SevaSetu Connect today.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
             <button

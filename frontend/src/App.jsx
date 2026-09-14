@@ -197,14 +197,30 @@ function AppContent() {
       <footer className="mt-auto border-t border-slate-200 bg-white/90 py-8 text-xs text-slate-500">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-brand-500"></span>
-              <span className="font-extrabold text-slate-900 text-sm">SevaSetu Connect</span>
+            <button 
+              onClick={() => {
+                setCurrentTab('landing');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="flex items-center gap-2 hover:opacity-80 transition text-left group"
+              title="Return to Home"
+            >
+              <span className="w-2.5 h-2.5 rounded-full bg-brand-500 group-hover:scale-125 transition"></span>
+              <span className="font-extrabold text-slate-900 text-sm group-hover:text-brand-700 transition">SevaSetu Connect</span>
               <span className="text-slate-400">|</span>
               <span className="text-slate-600">National Cooperative Gig Work Federation</span>
-            </div>
+            </button>
 
             <div className="flex items-center gap-4 text-xs">
+              <button 
+                onClick={() => {
+                  setCurrentTab('landing');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="hover:text-slate-900 font-semibold"
+              >
+                Home
+              </button>
               <button 
                 onClick={() => setCurrentTab('search')}
                 className="hover:text-slate-900"

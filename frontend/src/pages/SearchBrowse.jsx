@@ -112,7 +112,7 @@ export const SearchBrowse = ({ currentCustomer, onWorkerRegisteredClick, initial
               </p>
               <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
                 <ShieldCheck className="w-3 h-3 text-emerald-600" />
-                <span>Fair Rotation Active: Verified workers $\ge$ 3.8 rotated democratically</span>
+                <span>Fair Rotation Active: Verified workers ≥ 3.8 rotated democratically</span>
               </span>
             </div>
           </div>
