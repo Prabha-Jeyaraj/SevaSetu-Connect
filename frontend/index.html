@@ -7,69 +7,7 @@
     href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2316a34a'><path d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'/></svg>" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SevaSetu Connect — Cooperative Gig Marketplace</title>
-  Update the SevaSetu Connect prototype with the following changes:
-
-1. FEE STRUCTURE UPDATE
-   - Platform fee is 10% total, broken into three tracked components:
-     6% platform operations, 2% government insurance premium fund (PMSBY/PMJJBY), 
-     2% training & quality fund
-   - Worker receives 90% of the job payment directly
-
-2. REMOVE RATING-BASED SEARCH RANKING — ADD FAIR ROTATION
-   - Currently, if search results are ordered by rating (highest first), 
-     change this: all verified workers with a rating of 3.8 or above should 
-     appear in fair, rotating order (e.g., round-robin or randomized on each 
-     search), not ranked by score
-   - Rating should still be visible on each worker's card, but must NOT 
-     determine their position in search results
-
-3. RETRAINING TRIGGER FOR LOW RATINGS
-   - When a worker's average rating drops below 3.8, automatically flag 
-     their account for "Mandatory Retraining" status (visible on their own 
-     dashboard and on the Society Admin dashboard)
-   - This should NOT block or suspend their account — they can keep working 
-     while flagged
-   - Add a simple "Retraining Status" field: Not Required / Assigned / 
-     Completed / Still Below Threshold (this last status should trigger a 
-     manual review flag for the Society Admin, not an automatic block)
-
-4. WORKER PERSONAL DASHBOARD (new page/section)
-   Add a dashboard visible only to the logged-in worker, showing:
-   - Total earnings this month
-   - Number of jobs completed this month
-   - Rating trend over time (simple line chart, last 6 months if data 
-     allows, else last N jobs)
-   - Month-over-month growth percentage (earnings or job count vs previous 
-     month)
-
-5. SOCIETY ADMIN — INTERNAL LEADERBOARD (new section on existing admin dashboard)
-   - Add a leaderboard view showing all workers in that society ranked by 
-     performance (rating, earnings, or jobs completed — pick rating as 
-     default sort)
-   - This is for INTERNAL admin visibility only — it must never be exposed 
-     to customers or affect search result ordering (see point 2)
-   - Include a visual indicator for workers currently flagged for 
-     retraining
-
-6. LANDING PAGE — REDESIGN SKILL/SERVICE CATEGORY SECTION
-   Replace the current worker-listing/search entry point on the landing 
-   page with a clean category grid, similar to how Urban Company's homepage 
-   displays service categories:
-   - A grid of clickable cards/chips, each showing: a simple icon 
-     representing the trade (electrician, plumber, carpenter, painter, 
-     caregiver, beautician, etc.) + the trade name as a short label below 
-     or beside the icon
-   - Clicking a category card navigates directly to the search/browse page, 
-     pre-filtered to that skill type
-   - Keep it visually simple and uncluttered — icon + label only, no extra 
-     text on the card itself
-   - This should sit prominently on the landing page, likely replacing or 
-     supplementing the current "Find Services" search bar entry point, so 
-     visitors can browse by category at a glance before they've even logged in
-
-Keep all existing working features (auth, booking, AI demand forecasting, 
-multi-tenant admin dashboards) intact — these are additive/corrective 
-changes only, not a rebuild.<meta name="description"
+  <meta name="description"
     content="Democratic, cooperative-owned gig-work marketplace platform empowering Indian service professionals with fair commissions, collective bargaining, and AI demand forecasting." />
 
   <!-- Open Graph / WhatsApp / LinkedIn Link Previews -->
